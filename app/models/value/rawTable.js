@@ -42,6 +42,10 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         type: DataTypes.STRING,
     },
+    DepartamentId: {
+        allowNull: false,
+        type: DataTypes.DECIMAL(3,0),
+    },
     Super: {
         allowNull: false,
         type: DataTypes.BOOLEAN,
@@ -49,8 +53,8 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     timestamps: false,
-    tableName: '',
-    modelName: '', //must be 'rawTable' but DB was created time ago and required to be named like this
+    tableName: 'usuarios',
+    modelName: 'usuarios', //must be 'rawTable' but DB was created time ago and required to be named like this
     freezeTableName: true //xportFacturasGlobales
   });
   return rawTable;

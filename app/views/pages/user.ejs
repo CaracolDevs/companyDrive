@@ -12,22 +12,27 @@
         <div>
             <img class="logo" src="/images/logo.jpg" alt="Logo">
         </div>
+        <ul class="headerList">
+            <li> <a href="javascript:history.back()"><p>Regresar</p></a></li>
+            <li> <a href="/directory/logout"><p>Cerrar Sesion</p></a></li>
+           </ul>
     </header>
     <div class="container-xxl">
     
+    <ul class="basic-ul">
+        <% for(var i = 0; i < content[0].length; i++) { %>
+            <li >
+                <a target="_self" class="title" href="/directory/<%= content[0][i] %>" ><span><%= content[0][i] %> </span></a>
+                
+                
 
-    </div>
-    
-    <div class="container">
-        <form action="/directory/login" method="POST">
-            <p>Iniciar Sesion</p>
+                
+            </li>
+            
+          <% } %>
 
-            <span>Usuario: &nbsp&nbsp&nbsp&nbsp&nbsp</span>
-            <input minlength="4" type="text" name="user" id="user"><br>
-            <span>Contraseña:</span>
-            <input minlength="4" type="password" name="pass" id="pass"><br>
-            <input type="submit" value="Entrar">
-        </form>
+          
+    </ul>
     </div>
 </body>
 </html>

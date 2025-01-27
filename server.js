@@ -2,8 +2,15 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const app = express()
 const path = require('path')
+const cookieParser = require('cookie-parser')
+
+
 
 const port = 3001
+
+// for pasing cookies
+
+app.use(cookieParser("mysecret"))
 
 // for parsing json
 app.use(

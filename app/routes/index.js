@@ -11,6 +11,9 @@ const readdir = promisify(fs.readdir)
 
 const routes = [
     {
+        path: 'user'
+    },
+    {
         path: 'items'
     },
     {
@@ -24,6 +27,7 @@ const routes = [
     }
 ]
 
+/*
 let folders = controller.folders
 
 let routing = controller.routing
@@ -35,6 +39,11 @@ let updateRouting = (req, res, next) => {
 
 router.get('/',updateRouting,controller.checkIndex)
 
+*/
+
+router.get('/', (req, res) =>{
+    res.render('index')
+})
 
 routes.forEach(route => {
     return router.use(`/${route.path}`, require(`./${route.path}`))

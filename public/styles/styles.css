@@ -8,8 +8,31 @@ header div img {
     margin-top: 12px
 }
 
-.first {
 
+
+.headerList {
+  list-style: none ;
+  
+}
+
+.headerList li{
+  display: inline-block ;
+  width: 200px;
+}
+
+.headerList li a{
+  text-decoration: none;
+  color: black;
+}
+
+.headerList li a:hover{
+  text-decoration: underline;
+  animation: 1s ease-in;
+}
+
+
+.first .custom-btn {
+  min-width: 200px
 }
 
 .second {
@@ -18,7 +41,7 @@ header div img {
 }
 
 form {
-    @media (max-width: 1200px) {
+    @media (max-width: 1300px) {
     width: 100%;
     margin-bottom: 8px;
       }
@@ -40,6 +63,10 @@ form {
     span {
         font-weight: bold;
     }
+}
+
+.basic ul .tag {
+  min-width: 200px;
 }
 
 .basic-ul li a{
@@ -85,6 +112,15 @@ form {
 .container form {
     width: 100%;
     text-align: center;
+}
+
+.container form span{
+  display: inline-block;
+  min-width: 180px;
+}
+
+.container form input[type=submit]{
+  margin-top: 20px;
 }
 
 h1 {

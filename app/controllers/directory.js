@@ -5,6 +5,11 @@ const multer = require('multer')
 const path = require('node:path'); 
 const admZip = require('adm-zip');
 
+const { Sequelize, Op, where}    = require('sequelize');
+const value = require('../models/value').usuarios;
+
+
+
 exports.folders = async (folder) => {
     try {
         const files = await readdir(`./uploads${folder}`);
@@ -181,8 +186,10 @@ exports.check = (req, res) => {
     }
 }
 
-exports.checkIndex = (req, res) => {
+exports.checkIndex = async (req, res) => {
     try {
+
+        
         const checkFiles = async (directory = `./uploads`) => {
             const files = await readdir(directory);
             let stats = []
@@ -199,16 +206,199 @@ exports.checkIndex = (req, res) => {
 
 
             let total = [files,stats]
+
+            if(req.signedCookies.departament != '0') {
+                total = [[files[req.signedCookies.departament -1]],[stats[req.signedCookies.departament - 1]]]
+                console.log("TOTAL::",total)
+            } 
             
  
 
             return total 
         }
-        checkFiles().then((content) => {
-            res.render('index', {content})
+        checkFiles().then(async (content) => {
+            if(req.signedCookies.signed == 'true' && req.signedCookies.super == 'true') {
+                res.render('admin', {content})
+            } else {
+                if(req.signedCookies.signed == 'true') {
+                    res.render('user', {content})
+                } else {
+                    res.redirect(req.get('referer'));
+                }
+                
+            }
+            
+            
         })
     } catch (error) {
         res.send({ message: 'not Done!' })
         throw error
     }
+    
+}
+
+exports.login = async (req, res) => {
+    try {
+
+        console.log(req.body)
+
+        let filters = {
+            User: req.body.user,
+            Password: req.body.pass
+        }
+        let result = await value.findAll({
+            where: filters
+        })
+
+
+        if(result.length > 0) {
+            console.log(result)
+            if(result[0].dataValues['Super']) {
+                res.cookie('signed', 'true', {signed: true})
+                res.cookie('super', 'true', {signed: true})
+                res.cookie('departament', result[0].dataValues.DepartamentId, {signed: true})
+                res.redirect('/directory')
+                
+            } else {
+                res.cookie('signed', 'true', {signed: true})
+                res.cookie('super', 'false', {signed: true})
+                res.cookie('departament', result[0].dataValues.DepartamentId, {signed: true})
+                res.redirect('/directory')
+            }
+        } else {
+            res.redirect(req.get('referer'))
+        }
+    } catch (Err) {
+        console.log(Err)
+    }
+}
+
+exports.logout = (req, res) => {
+    res.clearCookie("signed")
+    res.clearCookie("super")
+    res.clearCookie("departament")
+    res.redirect("/")
+}
+
+exports.displayUsers = async (req, res) => {
+
+    let result = await value.findAll({
+        where: {
+            [Op.not]: [{
+                Super: 1
+            }]
+        }
+    })
+
+    let content = [],
+    name = [],
+    id = [],
+    depa = []
+
+    for(values of result) {
+        id.push(values.dataValues['UserId'])
+        name.push(values.dataValues['User'])
+        depa.push(values.dataValues['Departament'])
+    }
+
+    content = [id,name,depa]
+    console.log("USERS", result, content)
+
+    res.render('adminUsers', {content})
+}
+
+// crear y borar usuarios
+
+let departamentos = [
+    {
+        name: 'Almacen',
+        id: '01'
+    },
+    {
+        name: 'Calidad',
+        id: '02'
+    },
+    {
+        name: 'Compras',
+        id: '03'
+    },
+    {
+        name: 'Gestion-de-Calidad',
+        id: '04'
+    },
+    {
+        name:'Mantenimiento',
+        id: '05'
+    },
+    {
+        name: 'Produccion',
+        id: '06'
+    },
+    {
+        name: 'Recursos-Humanos',
+        id: '07'
+    },
+    {
+        name: 'Seguridad-e-Higiene',
+        id: '08'
+    },
+    {
+        name: 'Ventas-y-Cobranza',
+        id: '09'
+    },
+    
+]
+
+
+exports.createUser = async (req,res) => {
+
+    if(req.body.pass != req.body.passc) {
+        res.render('userFail')
+    } else {
+        const user = await value.create({ User: req.body.user, Password: req.body.pass, Departament: departamentos[req.body.dep - 1].name, DepartamentId: departamentos[req.body.dep - 1].id, Super: 0});
+        res.redirect(req.get('referer'));
+        console.log("usuario creado")
+    }
+    
+}
+
+exports.deleteUser = async (req,res) => {
+    let filters = {
+        UserId: req.body.name,
+    }
+    let user = await value.findAll({
+        where: filters
+    })
+    console.log(user)
+    await user[0].destroy();
+    res.redirect(req.get('referer'));
+}
+
+exports.updateUser = async (req,res) => {
+    console.log(req.body)
+    let filters = {
+        UserId: req.body.id,
+    }
+    let user = await value.findAll({
+        where: filters
+    })
+    if(req.body.name) {
+        console.log("user")
+        user[0].User = req.body.name
+    }
+
+    if(req.body.pass) {
+        console.log("pass")
+        user[0].Password = req.body.pass
+    }
+
+    if(req.body.depa && req.body.depa != '00') {
+        console.log("depa")
+        user[0].Departament = departamentos[req.body.depa - 1].name
+        user[0].DepartamentId = departamentos[req.body.depa - 1].id
+    }
+
+    await user[0].save();
+
+    res.redirect(req.get('referer'));
 }

@@ -5,6 +5,9 @@ const readdir = promisify(fs.readdir)
 const express = require('express')
 const router = express.Router()
 
+//EL CODIGO AQUI ES MERO EJEMPLO Y NO TIENE IMPLICAICON EN LA APLICACION
+
+
 exports.folders = async (folder) => {
     try {
         const files = await readdir(`./uploads${folder}`);
@@ -48,8 +51,11 @@ routeFolders()
 }*/
 
 
-exports.check = (req, res) => {
+exports.check = async (req, res) => {
+    
+
     try {
+        
         const checkFiles = async (directory = `./uploads`) => {
             const files = await readdir(directory);
             console.log(files)
