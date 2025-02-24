@@ -51,16 +51,11 @@
                     <input class="custom-btn btn-7" minlength="4" type="password" name="pass" id="pass" value=""> 
                     <span>Departamento</span>
                     <select class="custom-btn btn-7" name="depa" id="depa">
-                        <option value="00">Default</option>
-                        <option value="01">Almacen</option>
-                        <option value="02">Calidad</option>
-                        <option value="03">Compras</option>
-                        <option value="04">Gestion de Calidad</option>
-                        <option value="05">Mantenimiento</option>
-                        <option value="06">Produccion</option>
-                        <option value="07">Recursos Humanos</option>
-                        <option value="08">Seguridad e Higiene</option>
-                        <option value="09">Ventas y Cobranza</option>
+
+                        <% for(var j = 0; j < departamentos.length; j++) { %>
+                            <option value="<%= j + 1 %>"><%= departamentos[j].name %></option>
+
+                            <% } %>
 
                     </select>   
                     <input class="custom-btn btn-7" type="submit" value="Actualizar" >
@@ -84,11 +79,19 @@
             <span>Usuario: &nbsp&nbsp&nbsp&nbsp&nbsp</span>
             <input required minlength="4" type="text" name="user" id="user"><br>
             <span>Contraseña:</span>
-            <input minlength="4" type="password" name="pass" id="pass"><br>
+            <input required minlength="4" type="password" name="pass" id="pass"><br>
             <span>Confirmar Contraseña</span>
-            <input minlength="4" type="password" name="passc" id="passc"><br>
+            <input required minlength="4" type="password" name="passc" id="passc"><br>
             <span>Departamento</span>
-            <input type="number" name="dep" id="dep"><br>
+            <select requried  name="dep" id="dep">
+
+                <% for(var j = 0; j < departamentos.length; j++) { %>
+                    <option value="<%= j + 1 %>"><%= departamentos[j].name %></option>
+
+                    <% } %>
+
+            </select> 
+            <br>
             <input required type="submit" value="Crear">
         </form>
     </div>

@@ -16,6 +16,11 @@ let updateRouting = (req, res, next) => {
     next()
 }
 
+let files = (req, res, next) => {
+    controller.files("/")
+    next()
+}
+
 
 router.post(
     `/create`,
@@ -41,8 +46,14 @@ router.get(
 
 router.post(
     `/download`,
+    controller.downloadCarpet
+)
+
+router.post(
+    `/:carpet/download`,
     controller.downloadFile
 )
+
 
 router.post(
     '/login',
@@ -83,6 +94,11 @@ router.post(
     controller.updateUser
 )
 
+
+router.get(
+    '/test',
+    files
+)
 
 
 

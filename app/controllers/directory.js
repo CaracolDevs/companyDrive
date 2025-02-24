@@ -120,19 +120,35 @@ exports.downloadFilee = (req, res) => {
 
 
 
-exports.downloadFile = async (req, res) => {
+exports.downloadCarpet = async (req, res) => {
     let zip = new admZip();
     let name = req.body.name
     // add local file
     console.log(req.body)
     const files = await readdir(`./uploads/${name}`);
-    const filess = await readdir("./")
-    console.log("filesss",filess)
+
     console.log("files:", files)
     files.forEach((element) => {
         zip.addLocalFile(`./uploads/${name}/${element}`);
         console.log("zip files:", files)
     })
+    // get everything as a buffer
+    const zipFileContents = zip.toBuffer();
+    console.log("zipcontents",zipFileContents)
+    const fileName = 'uploads.zip';
+    const fileType = 'application/zip';
+    res.setHeader('Content-Type', 'application/zip').send(zipFileContents)
+      console.log("filename;",fileName)
+};
+
+exports.downloadFile = async (req, res) => {
+    
+    let zip = new admZip();
+    let name = req.body.name
+    // add local file
+
+    zip.addLocalFile(`./uploads${name}`);
+
     // get everything as a buffer
     const zipFileContents = zip.toBuffer();
     console.log("zipcontents",zipFileContents)
@@ -282,6 +298,8 @@ exports.logout = (req, res) => {
 
 exports.displayUsers = async (req, res) => {
 
+    let departamentos = await deps('/')
+
     let result = await value.findAll({
         where: {
             [Op.not]: [{
@@ -304,11 +322,11 @@ exports.displayUsers = async (req, res) => {
     content = [id,name,depa]
     console.log("USERS", result, content)
 
-    res.render('adminUsers', {content})
+    res.render('adminUsers', {content, departamentos})
 }
 
 // crear y borar usuarios
-
+/*
 let departamentos = [
     {
         name: 'Almacen',
@@ -347,10 +365,11 @@ let departamentos = [
         id: '09'
     },
     
-]
+]*/
 
 
 exports.createUser = async (req,res) => {
+    let departamentos = await deps('/')
 
     if(req.body.pass != req.body.passc) {
         res.render('userFail')
@@ -375,6 +394,7 @@ exports.deleteUser = async (req,res) => {
 }
 
 exports.updateUser = async (req,res) => {
+    let departamentos = await deps('/')
     console.log(req.body)
     let filters = {
         UserId: req.body.id,
@@ -393,7 +413,7 @@ exports.updateUser = async (req,res) => {
     }
 
     if(req.body.depa && req.body.depa != '00') {
-        console.log("depa")
+        console.log("depa", departamentos )
         user[0].Departament = departamentos[req.body.depa - 1].name
         user[0].DepartamentId = departamentos[req.body.depa - 1].id
     }
@@ -401,4 +421,40 @@ exports.updateUser = async (req,res) => {
     await user[0].save();
 
     res.redirect(req.get('referer'));
+}
+
+//// ocupo capturar todas las carpetas, sus archivos, guardarlos en arrays y despues rutearlos
+
+deps = async (folder) => {
+    try {
+        const files = await readdir(`./uploads${folder}`);
+        console.log(files)
+        let indexedFiles = []
+        files.forEach((item,index) => {
+            indexedFiles.push({name: item, id: index + 1})
+        })
+        console.log(indexedFiles)
+        return indexedFiles;
+        
+    } catch (error) {
+        throw error
+    }
+}
+
+exports.routingFiles = async (folders, router) => {
+    let departamentos = await deps('/')
+    
+
+    departamentos.forEach (async ( item,index) => {
+        let results = await folders(`/${item['name']}`)
+        results.forEach(result => {
+            return router.get(`/${item}/${result}`, async function(req, res) {
+                let content = await folders(`${item}/${result}`)
+                console.log("psot results", content, result)
+                res.render('foldersIn',{result,content});
+              })
+        })
+    })
+    console.log("results", results)
+    
 }
