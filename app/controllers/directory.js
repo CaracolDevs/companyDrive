@@ -27,7 +27,19 @@ exports.routing = async (folders, router) => {
         return router.get(`/${result}`, async function(req, res) {
             let content = await folders(`/${result}`)
             console.log("psot results", content, result)
-            res.render('folders',{result,content});
+
+            console.log(req.signedCookies.signed)
+
+            if(req.signedCookies.signed == 'true' && req.signedCookies.super == 'true') {
+                res.render('folders', {result,content})
+            } else {
+                if(req.signedCookies.signed == 'true') {
+                    res.render('foldersUsers', {result,content})
+                } else {
+                    res.redirect(req.get('referer'));
+                }
+                
+            }
           })
     })
 }
