@@ -51,7 +51,7 @@
                     <input class="custom-btn btn-7 pass" minlength="4" type="password" name="pass" id="pass" value=""> 
                     <span>Departamento</span>
                     <select class="custom-btn btn-7" name="depa" id="depa">
-
+                        <option value="00">Default</option>
                         <% for(var j = 0; j < departamentos.length; j++) { %>
                             <option value="<%= j + 1 %>"><%= departamentos[j].name %></option>
 
