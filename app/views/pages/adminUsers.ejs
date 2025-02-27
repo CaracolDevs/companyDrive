@@ -44,11 +44,11 @@
                     <input class="basic-input" type="text" name="name" id="name" value="<%= content[0][i] %>">       
                 </form>
                 <form class="basic-form second" action="/directory/users/edit?id=<%= content[0][i] %>" enctype="x-www-form-urlencoded" method="POST" onSubmit="return confirm('Este valor se borrara DIFNITIVAMENTE, esta seguro de continuar?');">
-                    <input class="basic-input" type="text" name="id" id="id" value="<%= content[0][i] %>">
+                    <input class="basic-input" type="password" name="id" id="id" value="<%= content[0][i] %>">
                     <span>Nombre:</span>
                     <input class="custom-btn btn-7" minlength="4" type="text" name="name" id="name" value="">   
                     <span>Contraseña</span>           
-                    <input class="custom-btn btn-7" minlength="4" type="password" name="pass" id="pass" value=""> 
+                    <input class="custom-btn btn-7 pass" minlength="4" type="password" name="pass" id="pass" value=""> 
                     <span>Departamento</span>
                     <select class="custom-btn btn-7" name="depa" id="depa">
 

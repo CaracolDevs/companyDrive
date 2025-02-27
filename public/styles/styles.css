@@ -105,6 +105,11 @@ form {
     text-transform: uppercase;
 }
 
+.basic-form pass{ 
+  text-transform: none!important;
+}
+
+
 .container {
     
 }
